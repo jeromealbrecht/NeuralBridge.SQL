@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "NeuralBridge.SQL": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
