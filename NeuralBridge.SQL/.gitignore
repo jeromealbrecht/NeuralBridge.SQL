@@ -1,0 +1,5 @@
+# Ne jamais envoyer les réglages avec mots de passe
+appsettings.json
+appsettings.Development.json
+[Bb]in/
+[Oo]bj/
