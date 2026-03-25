@@ -1,19 +1,15 @@
-// Program.cs de l'API
 using Microsoft.SemanticKernel;
 using NeuralBridge.SQL.Infrastructure;
 using NeuralBridge.SQL.Plugins;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurer les secrets et la DB
 string mistralKey = builder.Configuration["MistralApiKey"]!;
 string connectionString = builder.Configuration.GetConnectionString("NeonDb")!;
 
-// 2. Enregistrer le Repository et le Plugin en tant que Singletons ou Scoped
 builder.Services.AddSingleton(new Repository(connectionString));
 builder.Services.AddScoped<SpectralMatchPlugin>();
 
-// 3. Configurer le Semantic Kernel
 builder.Services.AddScoped(sp =>
 {
     var kernelBuilder = Kernel.CreateBuilder();
@@ -23,7 +19,6 @@ builder.Services.AddScoped(sp =>
         endpoint: new Uri("https://api.mistral.ai/v1")
     );
 
-    // On récupère le plugin déjà enregistré dans la DI
     var plugin = sp.GetRequiredService<SpectralMatchPlugin>();
     kernelBuilder.Plugins.AddFromObject(plugin, "SpectralMatch");
 
@@ -31,7 +26,15 @@ builder.Services.AddScoped(sp =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
